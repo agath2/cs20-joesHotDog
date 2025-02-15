@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <title>Joe's Virtual Hotdog Stand</title>
+
+        <style>
+                /* Banner */
+                h1 { 
+                    background-color: #de492b;
+                    color: white;
+                    padding: 15px;
+                    border-radius: 8px;
+                    display: inline-block;
+                    margin-bottom: 20px;
+                }
+        
+                /* Table for displaying order */
+                table {
+                    width: 50%;
+                    margin: 20px auto;
+                    border-collapse: collapse;
+                    background: white;
+                    border-radius: 8px;
+                    overflow: hidden;
+                }
+                th, td {
+                    padding: 12px;
+                    border: 1px solid #ddd;
+                }
+                th {
+                    background-color: #de492b;
+                    color: white;
+                }
+        
+                /* place order button */
+                #place_order {
+                    background-color: #de492b;
+                    color: white;
+                    border: none;
+                    padding: 12px 20px;
+                    font-size: 18px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: 0.3s ease;
+                }
+        
+                #place_order:hover {
+                    background-color: #dd9a13;
+                }
+        </style>
+
+        <script>
+                /* price of fooditems */
+                const PRICE_HOTDOG = 4.99;
+                const PRICE_FRIES = 3.99;
+                const PRICE_SODA = 1.79;
+                /* consts for later calculating tax */
+                const DISCOUNT_THRESHOLD = 30;
+                const DISCOUNT_RATE = 0.10;
+                const TAX_RATE = 0.0625;
+                
+                /* Prompt user for input */
+                do {
+                        numDogs = parseInt(prompt("How many hotdogs would you like?"), 10) || 0;
+                        numFries = parseInt(prompt("How many fries would you like?"), 10) || 0;
+                        numSoda = parseInt(prompt("How many sodas would you like?"), 10) || 0;
+
+                        /* continue prompting if nothing is ordered */
+                        if (numDogs == 0 && numFries == 0 && numSoda == 0) {
+                                alert("Nothing ordered. Please enter at least one item.");
+                        }
+
+                } while (numDogs == 0 && numFries == 0 && numSoda == 0);
+
+                /* Struct for storing data */
+                function FoodItem(name, amount, price) {
+                        this.name = name;
+                        this.amount = amount;
+                        this.price = price * amount;
+                }
+                hotDog = new FoodItem("Hot Dog", numDogs, PRICE_HOTDOG);
+                fries = new FoodItem("French Fries", numFries, PRICE_FRIES);
+                soda = new FoodItem("Soda", numSoda, PRICE_SODA);
+
+                /* Store in array */
+                order = [hotDog, fries, soda];
+
+                /* Calculate subtotal */
+                let subtotal = hotDog.price + fries.price + soda.price;
+
+                /* Apply discount if eligible */
+                let discount = 0;
+                if (subtotal >= DISCOUNT_THRESHOLD) {
+                        discount = subtotal * DISCOUNT_RATE;
+                        subtotal -= discount;
+                }
+
+                /* Calculate tax and final total */
+                let tax = subtotal * TAX_RATE;
+                let total = subtotal + tax;
+
+                /* function recieves a float and returns a string of formatted amount */
+                const showMoney = function(price) {
+                        let rounded = Math.round(price * 100) / 100;
+                        let result = rounded.toString();
+                        let decimalPart = result.split('.')[1] || "";
+                        while (decimalPart.length < 2) {
+                                decimalPart += "0";
+                        }
+                        return result.split('.')[0] + "." + decimalPart;
+                };
+
+                /* Order Now button */
+                window.onload = function() {
+                        btn = document.getElementById('place_order');
+                        btn.onclick = function() {
+                                alert("Thank you for your purchase!");
+                        }
+                };
+        </script>
+</head>
+
+<body>
+        <!--Banner-->
+        <div>
+                <h1>Welcome to Joe's Virtual Hotdog Stand!</h1>
+        </div>
+
+        <!--Page Body-->
+        <div>
+        <h2>Confirm Your Order:</h2>
+
+        <!--Table for displaying the customer's order and total price-->
+        <table>
+                <tr>
+                    <th>Item</th>
+                    <th>Amount</th>
+                    <th>Price</th>
+                </tr>
+                <script>
+                    for (i = 0; i < order.length; i++) {
+                        if (order[i].amount != 0) {
+                            document.write("<tr>");
+                            document.write("<td>" + order[i].name + "</td>");
+                            document.write("<td>" + order[i].amount + "</td>");
+                            document.write("<td>$" + showMoney(order[i].price) + "</td>");
+                            document.write("</tr>");
+                        }
+                    }
+                </script>
+                <tr>
+                    <td colspan="2"><strong>Subtotal:</strong></td>
+                    <td><strong>$<script>document.write(showMoney(subtotal))</script></strong></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>Discount (10% on $30+):</strong></td>
+                    <td><strong>-$<script>document.write(showMoney(discount))</script></strong></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>Tax (6.25%):</strong></td>
+                    <td><strong>$<script>document.write(showMoney(tax))</script></strong></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>Total:</strong></td>
+                    <td><strong>$<script>document.write(showMoney(total))</script></strong></td>
+                </tr>
+        </table>
+
+        <br />
+        <button id="place_order">Order Now!</button> <!--Button doesn't really do anything-->
+        </div>
+</body>
+
+</html>
